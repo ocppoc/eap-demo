@@ -11,6 +11,18 @@ pipeline{
     string(name: 'tag', defaultValue: 'latest', description: 'Image Tag Name')
   }
   stages{
+    stage("Change Docker Image Tag"){
+      steps{
+        script{
+          openshift.withCluster(){
+            openshift.withProject('${dev_NAMESPACE}'){
+              openshift.tag('${DEV_NAMESPACE}/${APP_NAME}:latest',
+                            '${DEV_NAMESPACE}/${APP_NAME}:$tag')
+            }
+          }
+        }
+      }
+    }
     stage("Deploy ImageStream to Staging"){
       when {
         expression {
